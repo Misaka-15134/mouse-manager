@@ -3,8 +3,7 @@
   "framework": "nextjs",
   "functions": {
     "app/api/**/route.ts": {
-      "memory": 1024,
-      "timeout": 30
+      "memory": 1024
     }
   },
   "env": {
