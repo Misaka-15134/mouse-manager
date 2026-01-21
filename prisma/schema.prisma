@@ -37,9 +37,10 @@ model UserLaboratory {
 
 model User {
   id        String          @id @default(cuid())
-  email     String          @unique
+  email     String?         @unique
+  openid    String?         @unique
   name      String?
-  password  String
+  password  String?
   role      String          @default("USER") // ADMIN, USER
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
