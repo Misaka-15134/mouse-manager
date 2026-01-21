@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Laboratory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users UserLaboratory[]
+  strains Strain[]
+
+  @@map("laboratories")
+}
+
+model UserLaboratory {
+  id         String @id @default(cuid())
+  userId     String
+  labId      String
+  role       String @default("MEMBER") // ADMIN, MEMBER
+  joinedAt   DateTime @default(now())
+  createdAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lab  Laboratory @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, labId])
+  @@map("user_laboratories")
+}
+
+model User {
+  id        String          @id @default(cuid())
+  email     String          @unique
+  name      String?
+  password  String
+  role      String          @default("USER") // ADMIN, USER
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  laboratories UserLaboratory[]
+
+  @@map("users")
+}
+
+model Strain {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  laboratoryId String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  laboratory Laboratory @relation(fields: [laboratoryId], references: [id], onDelete: Cascade)
+  cages      Cage[]
+
+  @@map("strains")
+}
+
+model Cage {
+  id         String    @id @default(cuid())
+  strainId   String
+  cageNumber String
+  groupId    String?
+  matingDate DateTime?
+  notes      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  strain Strain  @relation(fields: [strainId], references: [id], onDelete: Cascade)
+  mice   Mouse[]
+
+  @@unique([strainId, cageNumber])
+  @@map("cages")
+}
+
+model Mouse {
+  id        String    @id @default(cuid())
+  cageId    String
+  sex       String    @default("UNKNOWN")
+  quantity  Int       @default(1)
+  genotype  String?
+  dob       DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  cage Cage @relation(fields: [cageId], references: [id], onDelete: Cascade)
+
+  @@map("mice")
+}
