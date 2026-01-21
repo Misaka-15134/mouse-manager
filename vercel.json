@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "functions": {
+    "app/api/**/route.ts": {
+      "memory": 1024,
+      "timeout": 30
+    }
+  },
+  "env": {
+    "DATABASE_URL": "$DATABASE_URL"
+  },
+  "buildCommand": "npm run db:generate && next build",
+  "installCommand": "npm install"
+}
